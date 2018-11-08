@@ -569,6 +569,10 @@ def verify_match_rule(rule, source_artifacts_queue, source_artifacts, links):
 
     This guarantees that artifacts were not modified between steps/inspections.
 
+    The rule only modifies the source artifacts queue, by removing artifacts
+    that were successfully consumed by the rule, i.e. if there was a match with
+    a target artifact.
+    
   <Terms>
     queued source artifacts:
         Artifacts reported by the link for the step/inspection containing passed
@@ -661,9 +665,7 @@ def verify_match_rule(rule, source_artifacts_queue, source_artifacts, links):
   try:
     dest_link = links[dest_name]
   except KeyError:
-    raise RuleVerificationError("Rule '{rule}' failed, destination link"
-        " '{dest_link}' not found in link dictionary".format(
-            rule=" ".join(rule), dest_link=dest_name))
+    return source_artifacts_queue
 
   # Extract destination artifacts from destination link
   if dest_type.lower() == "materials":
@@ -783,8 +785,7 @@ def verify_create_rule(rule, source_materials_queue, source_products_queue):
 
   """
   rule_data = in_toto.rulelib.unpack_rule(rule)
-
-
+  
   matched_products = fnmatch.filter(
       source_products_queue, rule_data["pattern"])
 
@@ -988,8 +989,9 @@ def verify_disallow_rule(rule, source_artifacts_queue):
       source_artifacts_queue, rule_data["pattern"])
 
   if len(matched_artifacts):
-    raise RuleVerificationError("Rule '{0}' failed, pattern matched disallowed"
-        " artifacts: '{1}' ".format(" ".join(rule), matched_artifacts))
+    raise RuleVerificationError("Rule '{0}' failed, rule pattern matches the"
+        " following artifacts of the artifact queue, which is disallowed:"
+        " '{1}' ".format(" ".join(rule), matched_artifacts))
 
 
 def verify_item_rules(source_name, source_type, rules, links):
