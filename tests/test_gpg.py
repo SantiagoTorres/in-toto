@@ -411,7 +411,7 @@ class TestGPGRSA(common.TestCaseLib):
   encryption_subkey_keyid = "6A112FD3390B2E53AFC2E57F8FC8E12099AECEEA"
   unsupported_subkey_keyid = "611A9B648E16F54E8A7FAD5DA51E8CDF3B06524F"
 
-  extra_settings = "keyrings"
+  extra_settings = "enable_gpg"
   directory_str = "rsa"
 
   def test_gpg_export_pubkey(self):
@@ -507,7 +507,7 @@ class TestGPGDSA(common.TestCaseLib):
 
   default_keyid = "C242A830DAAF1C2BEF604A9EF033A3A3E267B3B1"
 
-  extra_settings = "keyrings"
+  extra_settings = "enable_gpg"
   directory_str = "dsa"
 
   def test_gpg_export_pubkey(self):

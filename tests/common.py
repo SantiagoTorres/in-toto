@@ -102,15 +102,8 @@ class TestCaseLib(unittest.TestCase):
         self.link_name_unfinished = UNFINISHED_FILENAME_FORMAT.format(
             step_name=self.step_name, keyid=self.key["keyid"])
     elif self.extra_settings:
-      if self.extra_settings == "keyrings":
-        # Change into directory with gpg keychain
-        self.gnupg_home = os.path.join(self.test_dir, self.directory_str)
-
-        # Find keyrings
-        gpg_keyring_path = os.path.join(os.path.dirname(
-            os.path.realpath(__file__)), "gpg_keyrings", self.directory_str)
-
-        shutil.copytree(gpg_keyring_path, self.gnupg_home)
+      if self.extra_settings == "enable_gpg":
+        self._setup_gpg_keyrings()
       elif self.extra_settings == "demo":
         # Copy demo files to temporary dir
         for file in os.listdir(demo_files):
@@ -124,6 +117,18 @@ class TestCaseLib(unittest.TestCase):
     if set_artifacts:
       in_toto.settings.ARTIFACT_EXCLUDE_PATTERNS = self.artifact_exclude_orig
       in_toto.settings.ARTIFACT_BASE_PATH = self.artifact_base_path_orig
+
+  @classmethod
+  def _setup_gpg_keyrings(self):
+    # Change into directory with gpg keychain
+    self.gnupg_home = os.path.join(self.test_dir, self.directory_str)
+
+    # Find keyrings
+    gpg_keyring_path = os.path.join(os.path.dirname(
+        os.path.realpath(__file__)), "gpg_keyrings", self.directory_str)
+
+    shutil.copytree(gpg_keyring_path, self.gnupg_home)
+
 
 def run_with_portable_scripts(decorated):
 
